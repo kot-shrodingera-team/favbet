@@ -1,7 +1,22 @@
 import getCoefficientGenerator from '@kot-shrodingera-team/germes-generators/stake_info/getCoefficient';
 
+// const getCoefficientText = (): string => {
+//   return null;
+// };
+
 const getCoefficient = getCoefficientGenerator({
   coefficientSelector: '.bbet_coef',
+  // getCoefficientText,
+  // replaceDataArray: [
+  //   {
+  //     searchValue: '',
+  //     replaceValue: '',
+  //   },
+  // ],
+  // removeRegex: /[\s,']/g,
+  // coefficientRegex: /(\d+(?:\.\d+)?)/,
+  fakeCoefficientWorkerParameterName: 'fakeCoefficient',
+  // context: () => document,
 });
 
 export default getCoefficient;

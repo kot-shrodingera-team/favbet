@@ -3,11 +3,18 @@
 //   getBalanceGenerator,
 // } from '@kot-shrodingera-team/germes-generators/stake_info/getBalance';
 
-import { getElement, log } from '@kot-shrodingera-team/germes-utils';
+import {
+  getElement,
+  getWorkerParameter,
+  log,
+} from '@kot-shrodingera-team/germes-utils';
 
 let balance = 0;
 
 const getBalance = (): number => {
+  if (getWorkerParameter('fakeBalance')) {
+    return Number(getWorkerParameter('fakeBalance'));
+  }
   return balance;
 };
 
@@ -20,6 +27,10 @@ export const balanceReady = async (): Promise<boolean> => {
 };
 
 export const updateBalance = async (): Promise<void> => {
+  if (getWorkerParameter('fakeBalance')) {
+    worker.JSBalanceChange(Number(getWorkerParameter('fakeBalance')));
+    return;
+  }
   const accountIcon = (await getElement('.message--icon')) as HTMLElement;
   if (!accountIcon) {
     log('Не найдена иконка аккаунта', 'crimson');

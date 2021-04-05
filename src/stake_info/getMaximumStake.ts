@@ -1,6 +1,7 @@
 // import getMaximumStakeGenerator, {
 //   maximumStakeReadyGenerator,
 // } from '@kot-shrodingera-team/germes-generators/stake_info/getMaximumStake';
+import { getWorkerParameter } from '@kot-shrodingera-team/germes-utils';
 import getBalance from './getBalance';
 
 let maximumStake: number;
@@ -34,6 +35,9 @@ export const setMaximumStake = (newMaximumStake: number): void => {
 // });
 
 const getMaximumStake = (): number => {
+  if (getWorkerParameter('fakeMaximumStake')) {
+    return Number(getWorkerParameter('fakeMaximumStake'));
+  }
   if (maximumStake) {
     return maximumStake;
   }

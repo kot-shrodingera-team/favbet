@@ -1,6 +1,5 @@
 import clearCouponGenerator from '@kot-shrodingera-team/germes-generators/show_stake/clearCoupon';
 import getStakeCount from '../stake_info/getStakeCount';
-// import getMaximumStake from '../stake_info/getMaximumStake';
 
 // const preCheck = (): boolean => {
 //   return false;
@@ -8,16 +7,18 @@ import getStakeCount from '../stake_info/getStakeCount';
 
 // const apiClear = (): void => {};
 
+// const postCheck = async (): Promise<boolean> => {
+//   return true;
+// };
+
 const clearCoupon = clearCouponGenerator({
   // preCheck,
   getStakeCount,
   // apiClear,
-  clearSingleSelector: '',
+  // clearSingleSelector: '',
   clearAllSelector: '.bbet_d_all',
-  clearMode: 'all-only',
-  // maxUnload: {
-  //   getMaximumStake,
-  // },
+  // postCheck,
+  // context: () => document,
 });
 
 export default clearCoupon;

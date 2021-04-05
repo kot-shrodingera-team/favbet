@@ -1,6 +1,10 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 
 const checkStakeStatus = (): boolean => {
+  if (getWorkerParameter('fakeDoStake')) {
+    log('[fake] Ставка принята', 'green');
+    return true;
+  }
   const succesfullBetElement = document.querySelector('.fa-check-circle');
   const errorElements = document.querySelectorAll(
     '.bbet_nfb li[class^="err_"]'

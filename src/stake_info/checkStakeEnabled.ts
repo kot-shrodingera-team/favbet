@@ -23,6 +23,8 @@ const checkStakeEnabled = checkStakeEnabledGenerator({
   //     message: '',
   //   },
   // ],
+  fakeStakeEnabledWorkerParameterName: 'fakeStakeEnabled',
+  // context: () => document,
 });
 
 export default checkStakeEnabled;

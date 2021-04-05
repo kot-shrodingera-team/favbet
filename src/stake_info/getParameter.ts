@@ -1,6 +1,14 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 
 const getParameter = (): number => {
+  if (getWorkerParameter('fakeParameter')) {
+    const parameter = Number(JSON.parse(worker.ForkObj).param);
+    if (Number.isNaN(parameter)) {
+      return -6666;
+    }
+    return parameter;
+  }
+
   const outcomeElement = document.querySelector('.outcmn');
   const marketElement = document.querySelector('.b_ev_name');
   if (!outcomeElement) {

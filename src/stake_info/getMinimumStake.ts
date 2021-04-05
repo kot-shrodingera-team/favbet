@@ -2,6 +2,8 @@
 //   minimumStakeReadyGenerator,
 // } from '@kot-shrodingera-team/germes-generators/stake_info/getMinimumStake';
 
+import { getWorkerParameter } from '@kot-shrodingera-team/germes-utils';
+
 // export const minimumStakeReady = minimumStakeReadyGenerator({
 //   minimumStakeElementSelector: '',
 //   // minimumStakeRegex: /(\d+(?:\.\d+)?)/,
@@ -27,6 +29,9 @@
 // });
 
 const getMinimumStake = (): number => {
+  if (getWorkerParameter('fakeMinimumStake')) {
+    return Number(getWorkerParameter('fakeMinimumStake'));
+  }
   switch (worker.Currency) {
     case 'RUR':
       return 10;
