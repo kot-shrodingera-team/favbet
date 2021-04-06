@@ -1,4 +1,4 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 import {
   JsFailError,
   NewUrlError,
@@ -9,6 +9,11 @@ import preCheck from './preCheck';
 import setBetAcceptMode from './setBetAcceptMode';
 
 const showStake = async (): Promise<void> => {
+  if (getWorkerParameter('fakeShowStake')) {
+    log('[fake] Ставка открыта', 'green');
+    worker.JSStop();
+    return;
+  }
   localStorage.setItem('couponOpening', '1');
   try {
     log(
