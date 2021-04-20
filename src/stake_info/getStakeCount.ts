@@ -2,7 +2,6 @@ import getStakeCountGenerator from '@kot-shrodingera-team/germes-generators/stak
 
 const getStakeCount = getStakeCountGenerator({
   stakeSelector: '.bbet_name',
-  fakeStakeCountWorkerParameterName: 'fakeStakeCount',
   // context: () => document,
 });
 

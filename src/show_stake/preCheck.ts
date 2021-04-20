@@ -2,14 +2,17 @@ import {
   log,
   getElement,
   checkBookerHost,
+  awaiter,
 } from '@kot-shrodingera-team/germes-utils';
 import {
   NewUrlError,
   JsFailError,
 } from '@kot-shrodingera-team/germes-utils/errors';
+import { getReactInstance } from '@kot-shrodingera-team/germes-utils/reactUtils';
 import checkAuth, { authStateReady } from '../stake_info/checkAuth';
 import { updateBalance } from '../stake_info/getBalance';
 import clearCoupon from './clearCoupon';
+import getProperty from './helpers/getProperty';
 
 const preCheck = async (): Promise<void> => {
   if (!checkBookerHost()) {
@@ -55,6 +58,28 @@ const preCheck = async (): Promise<void> => {
   const couponCleared = await clearCoupon();
   if (!couponCleared) {
     throw new JsFailError('Не удалось очистить купон');
+  }
+
+  const coupon = document.querySelector('#sright div.bbet');
+
+  if (!coupon) {
+    throw new JsFailError('Не найден купон');
+  }
+
+  const dispatcherAppeared = await awaiter(() => {
+    const couponReactInstance = getReactInstance(coupon) as Record<
+      string,
+      unknown
+    >;
+    const dispatch = getProperty(
+      couponReactInstance,
+      'alternate.return.alternate.return.alternate.return.alternate.return.memoizedProps.value.store.dispatch'
+    );
+    return Boolean(dispatch);
+  });
+
+  if (!dispatcherAppeared) {
+    throw new JsFailError('Не найден диспетчер');
   }
 };
 

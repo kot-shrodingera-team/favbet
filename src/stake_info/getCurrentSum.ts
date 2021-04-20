@@ -13,7 +13,6 @@ const getCurrentSum = getCurrentSumGenerator({
   // ],
   // removeRegex: /[\s,']/g,
   // currentSumRegex: /(\d+(?:\.\d+)?)/,
-  fakeCurrentSumWorkerParameterName: 'fakeCurrentSum',
   // context: () => document,
 });
 

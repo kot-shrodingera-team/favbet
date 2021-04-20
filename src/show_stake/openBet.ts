@@ -12,20 +12,10 @@ import getCurrentSum from '../stake_info/getCurrentSum';
 import { setMaximumStake } from '../stake_info/getMaximumStake';
 import getStakeCount from '../stake_info/getStakeCount';
 import setStakeSum from '../worker_callbacks/setStakeSum';
-
-const getProperty = (
-  object: Record<string, unknown>,
-  propertyPath: string
-): unknown => {
-  const properties = propertyPath.split('.');
-  let result = object;
-  while (result && properties.length) {
-    result = result[properties.shift()] as Record<string, unknown>;
-  }
-  return result;
-};
+import getProperty from './helpers/getProperty';
 
 const openBet = async (): Promise<void> => {
+  // Получение данных из меты
   const marketData = JSON.parse(worker.BetId);
   // const [
   //   /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention */
@@ -37,6 +27,7 @@ const openBet = async (): Promise<void> => {
   //   outcomeId,
   // ] = worker.BetId.split('|');
 
+  // Формирование данных для поиска
   const data = {
     'eventId': Number(worker.EventId),
     'isLiveWidgetOutcome': undefined as unknown,
@@ -101,14 +92,15 @@ const openBet = async (): Promise<void> => {
   const betNameSelector = '.bbet .outcmn';
 
   const eventNameElement = document.querySelector(eventNameSelector);
+  const marketNameElement = document.querySelector(marketNameSelector);
+  const betNameElement = document.querySelector(betNameSelector);
+
   if (!eventNameElement) {
     throw new JsFailError('Не найдено событие открытой ставки');
   }
-  const marketNameElement = document.querySelector(marketNameSelector);
   if (!marketNameElement) {
     throw new JsFailError('Не найден маркет открытой ставки');
   }
-  const betNameElement = document.querySelector(betNameSelector);
   if (!betNameElement) {
     throw new JsFailError('Не найдена роспись открытой ставки');
   }
@@ -116,6 +108,7 @@ const openBet = async (): Promise<void> => {
   const eventName = eventNameElement.textContent.trim();
   const marketName = marketNameElement.textContent.trim();
   const betName = betNameElement.textContent.trim();
+
   log(`Открыта ставка\n${eventName}\n${marketName}\n${betName}`, 'steelblue');
 };
 

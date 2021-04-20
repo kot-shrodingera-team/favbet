@@ -1,66 +1,151 @@
 import checkCouponLoadingGenerator from '@kot-shrodingera-team/germes-generators/worker_callbacks/checkCouponLoading';
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { awaiter, getElement, log } from '@kot-shrodingera-team/germes-utils';
+// import { JsFailError } from '@kot-shrodingera-team/germes-utils/errors';
+// import openBet from '../show_stake/openBet';
 import { getDoStakeTime } from '../stake_info/doStakeTime';
 
-// let lastRefreshTime: Date = null;
+const bookmakerName = '';
 
-// export const clearLastRefreshTime = (): void => {
-//   lastRefreshTime = null;
+const timeout = 50000;
+const getRemainingTimeout = (maximum?: number) => {
+  const result = timeout - (new Date().getTime() - getDoStakeTime().getTime());
+  if (maximum !== undefined && timeout > maximum) {
+    return maximum;
+  }
+  return result;
+};
+
+const error = (message?: string) => {
+  if (message !== undefined) {
+    log(message, 'crimson');
+  }
+  window.germesData.betProcessingStep = 'error';
+};
+// const errorInform = (message: string) => {
+//   log(message, 'crimson');
+//   worker.Helper.SendInformedMessage(
+//     `В ${bookmakerName} произошла ошибка принятия ставки:\n${message}\n`
+//   );
+//   window.germesData.betProcessingStep = 'error';
+// };
+const success = (message?: string) => {
+  if (message !== undefined) {
+    log(message, 'steelblue');
+  }
+  window.germesData.betProcessingStep = 'success';
+};
+// const reopen = async (message?: string) => {
+//   if (message !== undefined) {
+//     log(message, 'crimson');
+//   }
+//   window.germesData.betProcessingStep = 'reopen';
+//   log('Переоткрываем купон', 'orange');
+//   try {
+//     await openBet();
+//     log('Ставка успешно переоткрыта', 'green');
+//     window.germesData.betProcessingStep = 'reopened';
+//   } catch (reopenError) {
+//     if (reopenError instanceof JsFailError) {
+//       log(reopenError.message, 'red');
+//       window.germesData.betProcessingStep = 'error';
+//     } else {
+//       log(reopenError.message, 'red');
+//       window.germesData.betProcessingStep = 'error';
+//     }
+//   }
 // };
 
-const check = () => {
-  // const referenceTime = lastRefreshTime || getDoStakeTime();
-  // const now = new Date();
-  // const timePassedSinceLastRefreshTime =
-  //   now.getTime() - referenceTime.getTime();
-  // const secondsPassedSinceLastRefreshTime = Math.floor(
-  //   timePassedSinceLastRefreshTime / 1000
-  // );
+const loaderSelector = '.bbet:not(.prgss) .bbet_prgs_msg';
+const errorSelector = '.bbet_nfb li[class^="err_"]';
+const acceptChangesButtonSelector = '.bbet_acpt:not(.nd)';
+const betPlacedSelector = '.fa-check-circle';
 
-  const progressElement = document.querySelector(
-    '.bbet:not(.prgss) .bbet_prgs_msg'
-  );
-  // const refreshElement = document.querySelector(
-  //   '.bbet:not(.prgss) .refreshb'
-  // ) as HTMLElement;
-  const succesfullBetElement = document.querySelector('.fa-check-circle');
-  const errorElements = document.querySelectorAll(
-    '.bbet_nfb li[class^="err_"]'
-  );
-  const acceptButton = document.querySelector('.bbet_acpt:not(.nd)');
+const asyncCheck = async () => {
+  window.germesData.betProcessingStep = 'waitingForLoaderOrResult';
 
-  if (progressElement) {
-    // if (refreshElement && secondsPassedSinceLastRefreshTime >= 3) {
-    //   log('Обработка ставки (индикатор). Обновляем', 'tan');
-    //   // refreshElement.click();
-    //   lastRefreshTime = new Date();
-    // } else {
-    log('Обработка ставки (индикатор)', 'tan');
-    // }
-    return true;
+  await Promise.race([
+    getElement(loaderSelector, getRemainingTimeout()),
+    getElement(errorSelector, getRemainingTimeout()),
+    getElement(acceptChangesButtonSelector, getRemainingTimeout()),
+    getElement(betPlacedSelector, getRemainingTimeout()),
+  ]);
+
+  const loaderElement = document.querySelector(loaderSelector);
+
+  if (loaderElement) {
+    log('Появился индикатор', 'steelblue');
+    window.germesData.betProcessingAdditionalInfo = 'индикатор';
+    awaiter(
+      () => {
+        return document.querySelector(loaderSelector) === null;
+      },
+      getRemainingTimeout(),
+      100
+    ).then((loaderDissappeared) => {
+      if (loaderDissappeared) {
+        log('Исчез индикатор', 'steelblue');
+        window.germesData.betProcessingAdditionalInfo = null;
+      }
+    });
+
+    window.germesData.betProcessingStep = 'waitingForResult';
+    await Promise.race([
+      getElement(errorSelector, getRemainingTimeout()),
+      getElement(acceptChangesButtonSelector, getRemainingTimeout()),
+      getElement(betPlacedSelector, getRemainingTimeout()),
+    ]);
   }
-  if (succesfullBetElement) {
-    log('Обработка ставки завершена (успешная ставка)', 'orange');
-    return false;
-  }
+
+  const errorElements = [...document.querySelectorAll(errorSelector)];
+  const acceptChangesButton = document.querySelector(
+    acceptChangesButtonSelector
+  );
+  const betPlacedElement = document.querySelector(betPlacedSelector);
+
   if (errorElements.length) {
-    log('Обработка ставки завершена (ошибка ставки)', 'orange');
-    return false;
+    errorElements.forEach((errorElement) => {
+      const errorText = errorElement.textContent.trim();
+      log(errorText, 'tomato');
+    });
+    return error();
   }
-  if (acceptButton) {
-    log('Обработка ставки завершена (изменение котировок)', 'orange');
-    return false;
+
+  if (acceptChangesButton) {
+    return error('Изменение котировок');
   }
-  log('Обработка ставки (нет индикатора)', 'tan');
-  return true;
+
+  if (betPlacedElement) {
+    return success('Ставка принята');
+  }
+
+  return error('Не дождались результата ставки');
+};
+
+const check = () => {
+  const step = window.germesData.betProcessingStep;
+  const additionalInfo = window.germesData.betProcessingAdditionalInfo
+    ? ` (${window.germesData.betProcessingAdditionalInfo})`
+    : '';
+  switch (step) {
+    case 'beforeStart':
+      asyncCheck();
+      return true;
+    case 'error':
+    case 'success':
+    case 'reopened':
+      log(`Обработка ставки завершена (${step})${additionalInfo}`, 'orange');
+      return false;
+    default:
+      log(`Обработка ставки (${step})${additionalInfo}`, 'tan');
+      return true;
+  }
 };
 
 const checkCouponLoading = checkCouponLoadingGenerator({
   getDoStakeTime,
-  bookmakerName: 'Favbet',
-  timeout: 50000,
+  bookmakerName,
+  timeout,
   check,
-  fakeDoStakeWorkerParameterName: 'fakeDoStake',
 });
 
 export default checkCouponLoading;

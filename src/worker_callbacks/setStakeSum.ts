@@ -13,7 +13,6 @@ const setStakeSum = setStakeSumGenerator({
   // preInputCheck,
   inputType: 'fireEvent',
   fireEventNames: ['blur'],
-  fakeDoStakeWorkerParameterName: 'fakeDoStake',
   // context: () => document,
 });
 

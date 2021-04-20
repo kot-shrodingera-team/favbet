@@ -9,13 +9,11 @@ export const authStateReady = authStateReadyGenerator({
   noAuthElementSelector,
   authElementSelector,
   // maxDelayAfterNoAuthElementAppeared: 0,
-  fakeAuthWorkerParameterName: 'fakeAuth',
   // context: () => document,
 });
 
 const checkAuth = checkAuthGenerator({
   authElementSelector,
-  fakeAuthWorkerParameterName: 'fakeAuth',
   // context: () => document,
 });
 

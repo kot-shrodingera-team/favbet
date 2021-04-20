@@ -12,8 +12,12 @@ import {
 let balance = 0;
 
 const getBalance = (): number => {
-  if (getWorkerParameter('fakeBalance')) {
-    return Number(getWorkerParameter('fakeBalance'));
+  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
+    const fakeBalance = getWorkerParameter('fakeBalance');
+    if (typeof fakeBalance === 'number') {
+      return fakeBalance;
+    }
+    return 100000;
   }
   return balance;
 };
@@ -27,8 +31,8 @@ export const balanceReady = async (): Promise<boolean> => {
 };
 
 export const updateBalance = async (): Promise<void> => {
-  if (getWorkerParameter('fakeBalance')) {
-    worker.JSBalanceChange(Number(getWorkerParameter('fakeBalance')));
+  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
+    worker.JSBalanceChange(getBalance());
     return;
   }
   const accountIcon = (await getElement('.message--icon')) as HTMLElement;

@@ -29,8 +29,16 @@ import { getWorkerParameter } from '@kot-shrodingera-team/germes-utils';
 // });
 
 const getMinimumStake = (): number => {
-  if (getWorkerParameter('fakeMinimumStake')) {
-    return Number(getWorkerParameter('fakeMinimumStake'));
+  if (
+    getWorkerParameter('fakeMinimumStake') ||
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
+  ) {
+    const fakeMinimumStake = getWorkerParameter('fakeMinimumStake');
+    if (typeof fakeMinimumStake === 'number') {
+      return fakeMinimumStake;
+    }
+    return 0;
   }
   switch (worker.Currency) {
     case 'RUR':

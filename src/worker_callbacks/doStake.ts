@@ -31,7 +31,6 @@ const doStake = doStakeGenerator({
   getCoefficient,
   postCheck,
   clearDoStakeTime,
-  fakeDoStakeWorkerParameterName: 'fakeDoStake',
   // context: () => document,
 });
 

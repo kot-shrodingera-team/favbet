@@ -35,8 +35,16 @@ export const setMaximumStake = (newMaximumStake: number): void => {
 // });
 
 const getMaximumStake = (): number => {
-  if (getWorkerParameter('fakeMaximumStake')) {
-    return Number(getWorkerParameter('fakeMaximumStake'));
+  if (
+    getWorkerParameter('fakeMaximumStake') ||
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
+  ) {
+    const fakeMaximumStake = getWorkerParameter('fakeMaximumStake');
+    if (typeof fakeMaximumStake === 'number') {
+      return fakeMaximumStake;
+    }
+    return 100000;
   }
   if (maximumStake) {
     return maximumStake;

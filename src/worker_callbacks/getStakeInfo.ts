@@ -11,9 +11,9 @@ import getMaximumStake from '../stake_info/getMaximumStake';
 import getCurrentSum from '../stake_info/getCurrentSum';
 
 const preAction = (): boolean => {
-  const acceptButton = document.querySelector(
+  const acceptButton = document.querySelector<HTMLElement>(
     '.bbet_acpt:not(.nd)'
-  ) as HTMLElement;
+  );
   if (acceptButton) {
     log('Принимаем изменения', 'orange');
     acceptButton.click();

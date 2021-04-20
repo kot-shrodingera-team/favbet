@@ -15,7 +15,6 @@ const getCoefficient = getCoefficientGenerator({
   // ],
   // removeRegex: /[\s,']/g,
   // coefficientRegex: /(\d+(?:\.\d+)?)/,
-  fakeCoefficientWorkerParameterName: 'fakeCoefficient',
   // context: () => document,
 });
 

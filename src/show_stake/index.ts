@@ -9,7 +9,7 @@ import preCheck from './preCheck';
 import setBetAcceptMode from './setBetAcceptMode';
 
 const showStake = async (): Promise<void> => {
-  if (getWorkerParameter('fakeShowStake')) {
+  if (getWorkerParameter('fakeOpenStake')) {
     log('[fake] Ставка открыта', 'green');
     worker.JSStop();
     return;
@@ -41,10 +41,9 @@ const showStake = async (): Promise<void> => {
         'red'
       );
       log(error.message, 'red');
-      // eslint-disable-next-line no-console
-      console.trace();
       localStorage.setItem('couponOpening', '0');
       worker.JSFail();
+      throw error;
     }
   }
 };
