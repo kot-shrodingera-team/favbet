@@ -15,6 +15,7 @@ const postCheck = (): boolean => {
     log('Удаляем список ошибок', 'orange');
     errorList.remove();
   }
+  window.germesData.betProcessingStep = 'beforeStart';
   return true;
 };
 
