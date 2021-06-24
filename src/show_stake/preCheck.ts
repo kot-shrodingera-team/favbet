@@ -30,6 +30,7 @@ const preCheck = async (): Promise<void> => {
     const betslip = await getElement('#sright div.bbet', 15000);
     if (!betslip) {
       // throw new JsFailError('Купон не появился');
+      window.location.reload();
       throw new NewUrlError('Купон не появился. Перезагружаем страницу');
     }
   }
