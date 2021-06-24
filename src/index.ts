@@ -6,7 +6,7 @@ import doStake from './worker_callbacks/doStake';
 import checkCouponLoading from './worker_callbacks/checkCouponLoading';
 import checkStakeStatus from './worker_callbacks/checkStakeStatus';
 import afterSuccesfulStake from './worker_callbacks/afterSuccesfulStake';
-import fastLoad from './fastLoad';
+import fastLoad, { clearGermesData } from './fastLoad';
 import initialize from './initialization';
 import showStake from './show_stake';
 
@@ -21,6 +21,7 @@ worker.SetCallBacks(
 );
 
 worker.SetFastCallback(fastLoad);
+clearGermesData();
 
 (async (): Promise<void> => {
   if (localStorage.getItem('couponOpening') === '1' && worker.IsShowStake) {
