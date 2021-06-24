@@ -29,7 +29,8 @@ const preCheck = async (): Promise<void> => {
     log('Открыт Live', 'steelblue');
     const betslip = await getElement('#sright div.bbet', 15000);
     if (!betslip) {
-      throw new JsFailError('Купон не появился');
+      // throw new JsFailError('Купон не появился');
+      throw new NewUrlError('Купон не появился. Перезагружаем страницу');
     }
   }
 
